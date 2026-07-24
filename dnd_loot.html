@@ -809,6 +809,70 @@
 <div class="container">
     <h1>D&D Loot & Mercanti Pro</h1>
     
+    <!-- Master Top Bar -->
+    <div style="background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-between; align-items: center; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);">
+        
+        <!-- Save/Load -->
+        <div style="display: flex; gap: 8px;">
+            <button class="tab-btn" onclick="salvaCampagna()" style="background: #2ecc71; color: white; border-color: #27ae60; font-weight: bold; font-size: 0.85em; padding: 8px 15px;">💾 Salva</button>
+            <label class="tab-btn" style="background: #3498db; color: white; border-color: #2980b9; font-weight: bold; font-size: 0.85em; padding: 8px 15px; cursor: pointer;">
+                📂 Carica
+                <input type="file" id="loadCampagnaInput" accept=".json" style="display: none;" onchange="caricaCampagna(event)">
+            </label>
+        </div>
+
+        <!-- Timer Sessione -->
+        <div style="display: flex; gap: 8px; align-items: center; background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+            <span style="font-family: 'Outfit'; font-weight: 700; color: var(--gold); font-size: 0.9em;">⏱️ Timer Sessione:</span>
+            <span id="sessionTimerDisplay" style="font-family: monospace; font-size: 1.2em; font-weight: bold; width: 70px; text-align: center;">00:00:00</span>
+            <button onclick="toggleSessionTimer()" id="timerToggleBtn" style="background: transparent; border: none; color: white; cursor: pointer; font-size: 1.1em;">▶️</button>
+            <button onclick="resetSessionTimer()" style="background: transparent; border: none; color: white; cursor: pointer; font-size: 1.1em;">🔄</button>
+        </div>
+
+        <!-- Utilities -->
+        <div style="display: flex; gap: 8px;">
+            <button class="tab-btn" onclick="toggleModManager()" style="font-size: 0.85em; padding: 8px 15px; background:linear-gradient(135deg, #8e44ad, #5e3370); border-color:#9b59b6; color:white;">⚙️ Gestione Mod</button>
+            <button class="tab-btn" onclick="toggleEventLog()" style="font-size: 0.85em; padding: 8px 15px;">📜 Log Eventi</button>
+            <button class="tab-btn" onclick="toggleFullscreen()" style="font-size: 0.85em; padding: 8px 15px;" title="Schermo Intero">⛶</button>
+        </div>
+    </div>
+    
+    <!-- Event Log Modal/Overlay (hidden by default) -->
+    <div id="eventLogModal" style="display: none; position: fixed; top: 20%; left: 50%; transform: translateX(-50%); width: 400px; max-height: 500px; background: #121212; border: 2px solid var(--gold); border-radius: 12px; z-index: 1000; padding: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); overflow-y: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; margin-bottom: 15px;">
+            <h3 style="margin: 0; color: var(--gold); font-family: 'Outfit';">📜 Cronologia Eventi</h3>
+            <button onclick="toggleEventLog()" style="background: transparent; border: none; color: white; cursor: pointer; font-size: 1.2em;">❌</button>
+        </div>
+        <div id="eventLogList" style="display: flex; flex-direction: column; gap: 8px; font-size: 0.9em; color: #ddd;">
+            <em style="color: #666;">Nessun evento registrato.</em>
+        </div>
+    </div>
+
+    <!-- Mod Manager Modal (hidden by default) -->
+    <div id="modManagerModal" style="display: none; position: fixed; top: 15%; left: 50%; transform: translateX(-50%); width: 500px; background: #121212; border: 2px solid #9b59b6; border-radius: 12px; z-index: 1000; padding: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.8);">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; margin-bottom: 15px;">
+            <h3 style="margin: 0; color: #9b59b6; font-family: 'Outfit';">⚙️ Gestore Mod & Dati</h3>
+            <button onclick="toggleModManager()" style="background: transparent; border: none; color: white; cursor: pointer; font-size: 1.2em;">❌</button>
+        </div>
+        <p style="font-size:0.9em; color:#ddd; margin-bottom:15px; line-height:1.4;">
+            Importa pacchetti <strong>JSON</strong> o <strong>CSV</strong> per arricchire il database. I nuovi dati verranno fusi (merge) con quelli esistenti.
+        </p>
+        <div class="control-group" style="margin-bottom:15px;">
+            <label>Scegli il Database di Destinazione</label>
+            <select id="modCategorySelector" class="chest-select" style="padding:10px; width:100%;">
+                <option value="items">📦 Oggetti (Forzieri / Negozi) [Accetta array di Oggetti]</option>
+                <option value="monsters">👹 Mostri Bestiario [Accetta array di Mostri]</option>
+                <option value="sounds">🎵 Soundboard [Accetta array {nome, cat, url}]</option>
+                <option value="narrative">🎭 Narrazione (PNG, Città, Taverne, Trappole, Indovinelli) [Accetta JSON MASTER_DATA_PACK]</option>
+            </select>
+        </div>
+        <div class="upload-section" style="border-color:#9b59b6; margin-bottom:10px;">
+            <input type="file" id="modFileInput" accept=".json,.csv">
+        </div>
+        <button class="generate-btn" onclick="importaDatiGlobali()" style="width:100%; padding:12px; font-size:1em; background:linear-gradient(135deg, #8e44ad, #5e3370); border-color:#9b59b6;">🚀 Importa Pacchetto Dati</button>
+        <div id="modStatusText" style="margin-top:10px; font-size:0.9em; color:#2ecc71; font-weight:bold; text-align:center;"></div>
+    </div>
+
     <!-- Tab Navigation -->
     <div class="tabs-nav">
         <button class="tab-btn active" onclick="switchTab('loot-tab', this)">📦 Forziere</button>
@@ -816,6 +880,7 @@
         <button class="tab-btn" onclick="switchTab('dice-tab', this)">🎲 Dadi</button>
         <button class="tab-btn" onclick="switchTab('monster-tab', this)">👹 Bestiario</button>
         <button class="tab-btn" onclick="switchTab('grid-tab', this)">🗺️ Mappa</button>
+        <button class="tab-btn" onclick="switchTab('world-tab', this)">🌍 Mondo</button>
     </div>
 
     <!-- Tab 1: Loot Chest Opener -->
@@ -950,6 +1015,19 @@
             <button class="generate-btn" onclick="aggiungiIncontroMostri()" style="flex:1; margin-top: auto; padding: 15px;">⚔️ Genera Incontro</button>
         </div>
 
+        <div style="background:rgba(0,0,0,0.3); border:1px solid rgba(212, 175, 55, 0.3); border-radius:12px; padding:15px; margin-top:20px;">
+            <div style="font-family:'Outfit'; font-weight:700; color:var(--gold); font-size:1.1em; margin-bottom:10px;">🧪 Creatore Mostro Personalizzato</div>
+            <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+                <input type="text" id="customMonsterName" placeholder="Nome Mostro" class="chest-select" style="padding:8px; font-size:0.9em; flex:2;">
+                <input type="text" id="customMonsterType" placeholder="Tipo (es. Umanoide)" class="chest-select" style="padding:8px; font-size:0.9em; flex:1;">
+                <input type="text" id="customMonsterCR" placeholder="CR" class="chest-select" style="padding:8px; font-size:0.9em; flex:1; max-width:60px;">
+                <input type="number" id="customMonsterHP" placeholder="HP" class="chest-select" style="padding:8px; font-size:0.9em; flex:1; max-width:70px;">
+                <input type="number" id="customMonsterAC" placeholder="CA" class="chest-select" style="padding:8px; font-size:0.9em; flex:1; max-width:70px;">
+            </div>
+            <textarea id="customMonsterAttacks" placeholder="Attacchi e Tratti (es. Morso: +5, 1d6+3 danni)" style="width:100%; height:60px; background:black; border:1px solid var(--glass-border); border-radius:6px; color:white; padding:8px; margin-bottom:10px; font-family:'Inter'; resize:vertical; outline:none;"></textarea>
+            <button class="generate-btn" onclick="creaMostroPersonalizzato()" style="padding:10px; font-size:0.9em; background:linear-gradient(135deg, #16a085, #0e6655); border-color:#1abc9c;">➕ Aggiungi al Database</button>
+        </div>
+
         <div class="shop-master-controls" style="margin-top: 20px;">
             <div class="control-group" style="grid-column: 1 / -1; display:flex; flex-direction:row; align-items:center; justify-content:space-between; width:100%;">
                 <span style="font-family:'Outfit', sans-serif; font-weight:700; color:var(--gold);">Combat Tracker Attivo</span>
@@ -964,7 +1042,14 @@
 
     <!-- Tab 5: Map & Dungeon Grid -->
     <div id="grid-tab" class="tab-content">
-        <div class="shop-master-controls" style="margin-bottom: 15px; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));">
+        <div style="display:flex; justify-content:flex-end; margin-bottom:10px;">
+            <label style="background:rgba(52, 152, 219, 0.2); border:1px solid #3498db; padding:8px 15px; border-radius:20px; cursor:pointer; display:flex; align-items:center; gap:8px;">
+                <input type="checkbox" id="playerViewToggle" onchange="togglePlayerView()">
+                <span style="font-family:'Outfit'; font-weight:700; color:#3498db;">Modalità Giocatore Attiva (Nasconde Trappole/Segreti)</span>
+            </label>
+        </div>
+
+        <div class="shop-master-controls dm-only-element" style="margin-bottom: 15px; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));">
             <div class="control-group">
                 <label>Righe</label>
                 <input type="number" id="gridRows" value="12" min="5" max="25" onchange="rigeneraGrigliaVuota()">
@@ -979,7 +1064,7 @@
 
         <div class="map-split-container" style="margin-top: 15px;">
             <!-- Left Column: Palette, Grid, and Cell Details -->
-            <div class="map-left-column">
+            <div class="map-left-column dm-only-element">
                 <!-- Palette and Selection Info -->
                 <div class="stat-block" style="border-color:rgba(255,255,255,0.15); display: flex; flex-direction: column; gap: 15px; margin-bottom:15px;">
                     <div>
@@ -1156,6 +1241,192 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Tab 6: Mondo & Narrazione -->
+    <div id="world-tab" class="tab-content">
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start;">
+            
+            <!-- Left Column: Atmosphere & Soundboard -->
+            <div style="display:flex; flex-direction:column; gap:20px;">
+                
+                <!-- Weather & Biome Tracker -->
+                <div class="stat-block" style="border-color:var(--gold);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:10px; margin-bottom:15px;">
+                        <span style="font-family:'Outfit'; font-weight:900; color:var(--gold); font-size:1.2em;">🌦️ Clima & Bioma</span>
+                        <span id="activeWeatherBadge" style="background:#555; padding:4px 8px; border-radius:6px; font-size:0.8em; font-weight:bold; color:white;">Sereno</span>
+                    </div>
+                    
+                    <div class="control-group" style="margin-bottom:15px;">
+                        <label>Bioma Attuale</label>
+                        <select id="biomeSelector" class="chest-select" style="padding:10px;" onchange="cambiaBioma()">
+                            <option value="pianura">Pianura / Foresta Temperata</option>
+                            <option value="montagna">Montagna / Picchi Ghiacciati</option>
+                            <option value="palude">Palude / Acquitrino</option>
+                            <option value="deserto">Deserto / Lande Aride</option>
+                            <option value="sottosuolo">Sottosuolo / Dungeon Oscuro</option>
+                            <option value="marittimo">Costa / Oceano Aperto</option>
+                        </select>
+                    </div>
+                    
+                    <button class="generate-btn" onclick="generaMeteoCasuale()" style="padding:12px; font-size:1em; margin-bottom:15px;">🌩️ Genera Evento Atmosferico</button>
+                    
+                    <div id="weatherEffectDesc" style="background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; border-left:3px solid var(--gold); font-size:0.9em; color:#ddd; min-height:40px;">
+                        <em>Nessun effetto atmosferico attivo. Le condizioni sono ottimali.</em>
+                    </div>
+                </div>
+
+                <!-- Enhanced Soundboard -->
+                <div class="stat-block" style="border-color:rgba(52, 152, 219, 0.5);">
+                    <div style="border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:10px; margin-bottom:15px;">
+                        <span style="font-family:'Outfit'; font-weight:900; color:#3498db; font-size:1.2em;">🎵 Soundboard (100+ Tracce)</span>
+                    </div>
+                    
+                    <div class="control-group" style="margin-bottom:10px;">
+                        <label>Categoria Effetti</label>
+                        <select id="soundCategory" class="chest-select" style="padding:10px;" onchange="popolaListaSuoni()">
+                            <option value="Battaglia">⚔️ Battaglia</option>
+                            <option value="Città">🏘️ Città & Taverna</option>
+                            <option value="Dungeon">🕷️ Dungeon & Caverne</option>
+                            <option value="Natura">🌲 Natura & Viaggio</option>
+                            <option value="Orrore">👻 Orrore & Tensione</option>
+                            <option value="Magia">✨ Magia & Incantesimi</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group" style="margin-bottom:15px;">
+                        <label>Traccia Audio</label>
+                        <select id="soundTrackSelect" class="chest-select" style="padding:10px;">
+                            <option>Caricamento...</option>
+                        </select>
+                    </div>
+                    
+                    <div style="display:flex; gap:10px;">
+                        <button class="tab-btn" onclick="playCustomAudio()" style="flex:2; background:#2ecc71; border-color:#27ae60; color:white; font-weight:bold;">▶️ Riproduci</button>
+                        <button class="tab-btn" onclick="stopAudio()" style="flex:1; background:#c0392b; border-color:#e74c3c; color:white;">⏹️ Stop</button>
+                    </div>
+                    <audio id="ambientAudioPlayer" loop></audio>
+                </div>
+
+                <!-- Quick NPC & Tavern Generator -->
+                <div class="stat-block" style="border-color:#9b59b6;">
+                    <div style="border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:10px; margin-bottom:15px;">
+                        <span style="font-family:'Outfit'; font-weight:900; color:#9b59b6; font-size:1.2em;">🎭 Improvvisazione Rapida</span>
+                    </div>
+                    
+                    <div style="display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
+                        <button class="generate-btn" onclick="generaPNG()" style="flex:1; padding:10px; background:linear-gradient(135deg, #8e44ad, #5e3370); border-color:#9b59b6; font-size:0.9em;">👤 PNG</button>
+                        <button class="generate-btn" onclick="generaTaverna()" style="flex:1; padding:10px; background:linear-gradient(135deg, #d35400, #a04000); border-color:#e67e22; font-size:0.9em;">🍺 Taverna</button>
+                        <button class="generate-btn" onclick="generaCitta()" style="flex:1; padding:10px; background:linear-gradient(135deg, #2980b9, #1a5276); border-color:#3498db; font-size:0.9em;">🏰 Città</button>
+                    </div>
+                    <div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;">
+                        <button class="generate-btn" onclick="generaTrappola()" style="flex:1; padding:10px; background:linear-gradient(135deg, #c0392b, #7b241c); border-color:#e74c3c; font-size:0.9em;">☠️ Trappola</button>
+                        <button class="generate-btn" onclick="generaIndovinello()" style="flex:1; padding:10px; background:linear-gradient(135deg, #16a085, #0e6655); border-color:#1abc9c; font-size:0.9em;">❓ Indovinello</button>
+                    </div>
+                    
+                    <div id="improvOutputCard" contenteditable="true" style="display:none; background:rgba(0,0,0,0.4); border:1px solid var(--glass-border); padding:15px; border-radius:10px; font-size:0.95em; line-height:1.4; outline:none;">
+                        <!-- Generated Content Goes Here -->
+                    </div>
+                    <div style="font-size:0.75em; color:#888; margin-top:5px; text-align:center;">* Puoi cliccare e modificare il testo generato.</div>
+                </div>
+
+                <!-- DM Notes -->
+                <div class="stat-block" style="border-color:#7f8c8d;">
+                    <div style="border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:10px; margin-bottom:15px;">
+                        <span style="font-family:'Outfit'; font-weight:900; color:#bdc3c7; font-size:1.2em;">📝 Appunti del Master</span>
+                    </div>
+                    <textarea id="dmNotesArea" placeholder="Scrivi qui i tuoi appunti segreti... (Verranno salvati col file)" style="width:100%; height:150px; background:rgba(0,0,0,0.4); border:1px solid var(--glass-border); border-radius:8px; color:#ddd; padding:10px; font-family:'Inter'; resize:vertical; outline:none;"></textarea>
+                </div>
+
+            </div>
+            
+            <!-- Right Column: Time & Quests -->
+            <div style="display:flex; flex-direction:column; gap:20px;">
+                
+                <!-- Calendar & Time Tracker -->
+                <div class="stat-block" style="border-color:#2ecc71;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:10px; margin-bottom:15px;">
+                        <span style="font-family:'Outfit'; font-weight:900; color:#2ecc71; font-size:1.2em;">📅 Calendario e Tempo</span>
+                        <span id="calendarDateDisplay" style="background:#145a32; padding:4px 8px; border-radius:6px; font-size:0.9em; font-weight:bold; color:white;">Giorno 1 - Mese 1</span>
+                    </div>
+                    
+                    <div style="display:flex; gap:10px; margin-bottom:15px; align-items:center; flex-wrap:wrap;">
+                        <button class="tab-btn" onclick="avanzaTempo(-1)" style="flex:1; background:rgba(255,0,0,0.1); border-color:#c0392b;">-1 Giorno</button>
+                        <button class="tab-btn" onclick="avanzaTempo(1)" style="flex:1;">+1 Giorno</button>
+                        <button class="tab-btn" onclick="avanzaTempo(7)" style="flex:1;">+1 Settimana</button>
+                        <button class="tab-btn" onclick="avanzaTempo(30)" style="flex:1;">+1 Mese</button>
+                    </div>
+                    
+                    <div id="calendarAlerts" style="background:rgba(0,0,0,0.2); padding:8px; border-radius:6px; font-size:0.85em; color:#bbb; min-height:30px;">
+                        Nessun evento rilevante.
+                    </div>
+                </div>
+
+                <!-- Travel Calculator -->
+                <div class="stat-block" style="border-color:#3498db;">
+                    <div style="border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:10px; margin-bottom:15px;">
+                        <span style="font-family:'Outfit'; font-weight:900; color:#3498db; font-size:1.2em;">🧭 Calcolatore Viaggio</span>
+                    </div>
+                    <div style="display:flex; gap:10px; margin-bottom:10px;">
+                        <div class="control-group" style="flex:1;">
+                            <label>Distanza (km)</label>
+                            <input type="number" id="travelDist" value="30" min="1">
+                        </div>
+                        <div class="control-group" style="flex:1;">
+                            <label>Velocità (km/giorno)</label>
+                            <input type="number" id="travelSpeed" value="30" min="1" title="A piedi normale = 30km/g. Cavallo = 60km/g">
+                        </div>
+                    </div>
+                    <button class="generate-btn" onclick="calcolaViaggio()" style="padding:10px; font-size:1em; background:linear-gradient(135deg, #2980b9, #1a5276); border-color:#3498db;">Calcola Tempo</button>
+                    <div id="travelResult" style="margin-top:10px; font-size:0.9em; color:#ddd;"></div>
+                </div>
+
+                <!-- Downtime Activity Manager -->
+                <div class="stat-block" style="border-color:#f1c40f;">
+                    <div style="border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:10px; margin-bottom:15px;">
+                        <span style="font-family:'Outfit'; font-weight:900; color:#f1c40f; font-size:1.2em;">⏳ Attività di Downtime</span>
+                    </div>
+                    
+                    <div class="control-group" style="margin-bottom:10px;">
+                        <label>Attività da Svolgere (in città)</label>
+                        <select id="downtimeActivity" class="chest-select" style="padding:10px;">
+                            <option value="lavoro">Mestiere / Lavoro Onesto (Guadagno sicuro)</option>
+                            <option value="forgia">Lavoro in Forgia (Creazione/Riparazione)</option>
+                            <option value="studio">Studio di un Tomo (Ricerca magia/lore)</option>
+                            <option value="erbe">Cerca Erbe / Caccia (Nei boschi vicini)</option>
+                            <option value="scommesse">Gioco d'Azzardo / Scommesse (Alto Rischio)</option>
+                            <option value="carousing">Carousing / Bagordi (Spesa oro, guadagno dicerie)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group" style="margin-bottom:15px;">
+                        <label>Giorni dedicati (Avanzerà il calendario)</label>
+                        <input type="number" id="downtimeDays" value="1" min="1" max="30">
+                    </div>
+                    
+                    <button class="generate-btn" onclick="eseguiDowntime()" style="padding:10px; font-size:1em; background:linear-gradient(135deg, #f39c12, #d35400); border-color:#f1c40f;">🔨 Esegui Attività</button>
+                    
+                    <div id="downtimeResult" style="margin-top:15px; display:none; background:rgba(0,0,0,0.4); padding:12px; border-radius:8px; border-left:3px solid #f1c40f; font-size:0.9em; line-height:1.4;">
+                        <!-- Downtime result -->
+                    </div>
+                </div>
+
+                <!-- Rumor Journal & Quest Log -->
+                <div class="stat-block" style="border-color:#e67e22; flex:1; display:flex; flex-direction:column;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:10px; margin-bottom:15px;">
+                        <span style="font-family:'Outfit'; font-weight:900; color:#e67e22; font-size:1.2em;">📜 Diario Dicerie & Quest Log</span>
+                        <button class="tab-btn" onclick="aggiungiQuestManuale()" style="padding:4px 8px; font-size:0.8em; background:#d35400; border:none; color:white;">+ Aggiungi Voce</button>
+                    </div>
+                    
+                    <div id="questLogContainer" style="flex:1; overflow-y:auto; max-height:400px; display:flex; flex-direction:column; gap:10px;">
+                        <div style="color:#888; font-style:italic; font-size:0.9em; text-align:center;">Il diario è vuoto. Segna qui dicerie o quest in sospeso.</div>
+                    </div>
+                </div>
+
+            </div>
+            
         </div>
     </div>
 </div>
@@ -70772,19 +71043,33 @@ function renderIncontro() {
                 hpColor = '#ff9900';
             }
             
-            let statsRow = `<div class="monster-stats-row">`;
-            Object.keys(monster.stat).forEach(s => {
-                statsRow += `
-                    <div class="monster-stat-col">
-                        <div class="monster-stat-label">${s}</div>
-                        <div class="monster-stat-value">${monster.stat[s]}</div>
-                    </div>
-                `;
-            });
-            statsRow += `</div>`;
+            // ================= PLAYER VIEW LOGIC =================
+            let pView = (typeof isPlayerView !== 'undefined' && isPlayerView);
+            
+            if (pView) {
+                if (monster.hpCur <= 0) statusText = "MORTALE";
+                else if (ratio < 0.3) statusText = "GRAVEMENTE FERITO";
+                else if (ratio < 0.7) statusText = "FERITO";
+                else statusText = "SANO";
+            }
+            // =======================================================
+            
+            let statsRow = "";
+            if (!pView) {
+                statsRow = `<div class="monster-stats-row">`;
+                Object.keys(monster.stat).forEach(s => {
+                    statsRow += `
+                        <div class="monster-stat-col">
+                            <div class="monster-stat-label">${s}</div>
+                            <div class="monster-stat-value">${monster.stat[s]}</div>
+                        </div>
+                    `;
+                });
+                statsRow += `</div>`;
+            }
             
             let traitsMarkup = "";
-            if (monster.tratti && monster.tratti.length > 0) {
+            if (!pView && monster.tratti && monster.tratti.length > 0) {
                 traitsMarkup += `<div style="margin-top:10px;">`;
                 monster.tratti.forEach(t => {
                     traitsMarkup += `<div style="font-size:0.9em; margin-bottom:6px; color:#ddd;"><strong>${t.nome}:</strong> ${t.descrizione}</div>`;
@@ -70794,74 +71079,71 @@ function renderIncontro() {
             
             // Build targets selector dropdown
             let targetOptions = `<option value="">🎯 Nessun Bersaglio</option>`;
-            Object.keys(activePlayers).forEach(pName => {
-                let p = activePlayers[pName];
-                targetOptions += `<option value="player:${pName}">👤 ${pName} (CA ${p.ca || 15})</option>`;
-            });
-            incontroCorrente.forEach(m => {
-                if (m.id !== monster.id && m.hpCur > 0) {
-                    targetOptions += `<option value="monster:${m.id}">👹 ${m.nomeIndividuale} (CA ${m.ca})</option>`;
-                }
-            });
+            if (!pView) {
+                Object.keys(activePlayers).forEach(pName => {
+                    let p = activePlayers[pName];
+                    targetOptions += `<option value="player:${pName}">👤 ${pName} (CA ${p.ca || 15})</option>`;
+                });
+                incontroCorrente.forEach(m => {
+                    if (m.id !== monster.id && m.hpCur > 0) {
+                        targetOptions += `<option value="monster:${m.id}">👹 ${m.nomeIndividuale} (CA ${m.ca})</option>`;
+                    }
+                });
+            }
             
             let actionsMarkup = `<div style="margin-top:12px; border-top:1px solid rgba(255,255,255,0.1); padding-top:10px;">`;
             actionsMarkup += `<span style="font-family:'Outfit',sans-serif; font-weight:700; color:var(--gold); font-size:0.95em;">Azioni, Attacchi & Magie:</span><br>`;
             monster.azioni.forEach((act, actIndex) => {
-                actionsMarkup += `
-                    <div style="font-size:0.9em; color:#ccc; margin-top:8px; display:flex; flex-direction:column; gap:6px; background:rgba(0,0,0,0.25); padding:8px 10px; border-radius:6px; border:1px solid var(--glass-border);">
-                        <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
-                            <span><strong>${act.nome}</strong>: ${act.formula} (${act.tipo})</span>
-                            <button class="roll-action-btn" onclick="rollMostroAzione('${monster.id}', ${actIndex})">🎲 Tira</button>
+                if (pView) {
+                    actionsMarkup += `<div style="font-size:0.9em; color:#ccc; margin-top:8px;">⚔️ <strong>${act.nome}</strong></div>`;
+                } else {
+                    actionsMarkup += `
+                        <div style="font-size:0.9em; color:#ccc; margin-top:8px; display:flex; flex-direction:column; gap:6px; background:rgba(0,0,0,0.25); padding:8px 10px; border-radius:6px; border:1px solid var(--glass-border);">
+                            <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                                <span><strong>${act.nome}</strong>: ${act.formula} (${act.tipo})</span>
+                                <button class="roll-action-btn" onclick="rollMostroAzione('${monster.id}', ${actIndex})">🎲 Tira</button>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:6px; justify-content:space-between;">
+                                <span style="font-size:0.8em; color:#888;">Info: ${act.testo || 'Standard'}</span>
+                                <select id="target-${monster.id}-${actIndex}-${grid.id}" class="chest-select" style="padding:4px; font-size:0.85em; width:auto; max-width:160px; height:auto; margin:0;">
+                                    ${targetOptions}
+                                </select>
+                            </div>
                         </div>
-                        <div style="display:flex; align-items:center; gap:6px; justify-content:space-between;">
-                            <span style="font-size:0.8em; color:#888;">Info: ${act.testo || 'Standard'}</span>
-                            <select id="target-${monster.id}-${actIndex}-${grid.id}" class="chest-select" style="padding:4px; font-size:0.85em; width:auto; max-width:160px; height:auto; margin:0;">
-                                ${targetOptions}
-                            </select>
-                        </div>
-                    </div>
-                `;
+                    `;
+                }
             });
             actionsMarkup += `</div>`;
             
-            let lootMarkup = `<div style="margin-top:12px; border-top:1px solid rgba(255,255,255,0.1); padding-top:10px; display:flex; flex-direction:column; gap:6px;">`;
-            if (monster.lootRollato) {
-                const rColor = rarityColors[monster.lootRollato.rarita] || rarityColors["Comune"];
-                lootMarkup += `
-                    <div style="font-size:0.85em; color:#aaa; font-weight:600;">Bottino Portato:</div>
-                    <div style="font-size:0.95em; color:#fff; font-weight:700; display:flex; align-items:center; gap:8px;">
-                        <span style="color:${rColor}; font-weight:900;">[${monster.lootRollato.rarita}]</span>
-                        <span>${monster.lootRollato.nome} (${monster.lootRollato.tipo})</span>
-                    </div>
-                    <div style="font-size:0.85em; color:#aaa; font-style:italic; background:rgba(0,0,0,0.2); padding:6px; border-radius:4px; border-left:2px solid ${rColor};">${monster.lootRollato.effetto}</div>
-                    <div style="font-size:0.9em; color:var(--gold); font-weight:bold;">💰 Monete Trovate: ${monster.lootRollato.monete || 'Nessuna'}</div>
-                `;
-            } else {
-                lootMarkup += `
-                    <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
-                        <span style="font-size:0.85em; color:#888;">Nessun bottino assegnato</span>
-                        <button class="roll-action-btn" onclick="rollMonsterLoot('${monster.id}')">🎒 Tira Bottino</button>
-                    </div>
-                `;
+            let lootMarkup = "";
+            if (!pView) {
+                lootMarkup = `<div style="margin-top:12px; border-top:1px solid rgba(255,255,255,0.1); padding-top:10px; display:flex; flex-direction:column; gap:6px;">`;
+                if (monster.lootRollato) {
+                    const rColor = rarityColors[monster.lootRollato.rarita] || rarityColors["Comune"];
+                    lootMarkup += `
+                        <div style="font-size:0.85em; color:#aaa; font-weight:600;">Bottino Portato:</div>
+                        <div style="font-size:0.95em; color:#fff; font-weight:700; display:flex; align-items:center; gap:8px;">
+                            <span style="color:${rColor}; font-weight:900;">[${monster.lootRollato.rarita}]</span>
+                            <span>${monster.lootRollato.nome} (${monster.lootRollato.tipo})</span>
+                        </div>
+                        <div style="font-size:0.85em; color:#aaa; font-style:italic; background:rgba(0,0,0,0.2); padding:6px; border-radius:4px; border-left:2px solid ${rColor};">${monster.lootRollato.effetto}</div>
+                        <div style="font-size:0.9em; color:var(--gold); font-weight:bold;">💰 Monete Trovate: ${monster.lootRollato.monete || 'Nessuna'}</div>
+                    `;
+                } else {
+                    lootMarkup += `
+                        <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                            <span style="font-size:0.85em; color:#888;">Nessun bottino assegnato</span>
+                            <button class="roll-action-btn" onclick="rollMonsterLoot('${monster.id}')">🎒 Tira Bottino</button>
+                        </div>
+                    `;
+                }
+                lootMarkup += `</div>`;
             }
-            lootMarkup += `</div>`;
-
-            card.innerHTML = `
-                <div class="stat-block-header" style="display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <h3 class="monster-title" style="font-size:1.15em; margin:0;">${monster.nomeIndividuale}</h3>
-                        <p class="monster-subtitle" style="font-size:0.8em; margin:0;">${monster.taglia} ${monster.tipo}, ${monster.allineamento} (CR ${monster.crStr})</p>
-                    </div>
-                    <div style="text-align:right;">
-                        <span style="font-size:0.75em; color:#aaa; font-weight:600;">Classe Armatura</span><br>
-                        <span style="font-size:1.2em; font-weight:900; color:var(--gold); font-family:'Outfit';">${monster.ca}</span>
-                    </div>
-                </div>
-                
-                <div class="tracker-section" style="margin: 8px 0; gap: 4px;">
-                    <span style="font-family:'Outfit'; font-weight:700; font-size:0.85em; flex:none;">HP:</span>
-                    <span id="hp-display-${monster.id}-${grid.id}" style="color:${hpColor}; font-weight:900; font-size:1em; flex:1; font-family:monospace; margin-left:5px;">${statusText}</span>
-                    
+            
+            // Health modifiers HTML
+            let healthModifiers = "";
+            if (!pView) {
+                healthModifiers = `
                     <div style="display:flex; gap:2px; flex:none; align-items:center;">
                         <button class="tracker-btn" style="padding:2px 4px; font-size:0.8em;" onclick="modificaHP('${monster.id}', -10)">-10</button>
                         <button class="tracker-btn" style="padding:2px 4px; font-size:0.8em;" onclick="modificaHP('${monster.id}', -5)">-5</button>
@@ -70871,6 +71153,29 @@ function renderIncontro() {
                         <button class="tracker-btn" style="padding:2px 4px; font-size:0.8em;" onclick="modificaHP('${monster.id}', 5)">+5</button>
                         <button class="tracker-btn" style="padding:2px 4px; font-size:0.8em;" onclick="modificaHP('${monster.id}', 10)">+10</button>
                     </div>
+                `;
+            }
+
+            card.innerHTML = `
+                <div class="stat-block-header" style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <h3 class="monster-title" style="font-size:1.15em; margin:0;">${monster.nomeIndividuale}</h3>
+                        <p class="monster-subtitle" style="font-size:0.8em; margin:0;">${monster.taglia} ${monster.tipo}, ${pView ? '???' : monster.allineamento} (CR ${pView ? '??' : monster.crStr})</p>
+                    </div>
+                    <div style="text-align:right;">
+                        <span style="font-size:0.75em; color:#aaa; font-weight:600;">Classe Armatura</span><br>
+                        <span style="font-size:1.2em; font-weight:900; color:var(--gold); font-family:'Outfit';">${pView ? '??' : monster.ca}</span>
+                    </div>
+                </div>
+                
+                <div class="tracker-section" style="margin: 8px 0; gap: 4px;">
+                    <span style="font-family:'Outfit'; font-weight:700; font-size:0.85em; flex:none;">HP:</span>
+                    <div style="flex:1; display:flex; align-items:center; border-radius:4px; overflow:hidden; background:#222; border:1px solid #444; height:18px;">
+                        <div style="width:${pView ? '100' : ratio*100}%; background:${hpColor}; height:100%; transition:width 0.3s; display:flex; justify-content:center; align-items:center;">
+                            <span style="color:${pView && ratio >= 0.5 ? 'white' : 'black'}; font-weight:900; font-size:0.85em; font-family:monospace;">${statusText}</span>
+                        </div>
+                    </div>
+                    ${healthModifiers}
                 </div>
 
                 <!-- Conditions Row -->
@@ -70878,7 +71183,7 @@ function renderIncontro() {
                     <strong>Condizioni:</strong> ${monster.conditions && monster.conditions.length > 0 ? monster.conditions.map(c => `<span style="background:#800080; padding:1px 4px; border-radius:3px; font-size:0.8em; margin-right:3px; color:#fff; border:0.5px solid white;">${c}</span>`).join(" ") : 'Nessuna'}
                 </div>
                 
-                <div style="font-size:0.8em; color:#aaa; line-height:1.3; margin-top:5px;">
+                <div style="font-size:0.8em; color:#aaa; line-height:1.3; margin-top:5px; display:${pView ? 'none' : 'block'}">
                     <strong>Velocità:</strong> ${monster.velocita} | <strong>Sensi:</strong> ${monster.sensi}
                 </div>
                 
@@ -72855,7 +73160,7 @@ function calcolaDifficoltaIncontro() {
         else if (numMonsters >= 15) mult = 5.0;
     } else if (numPlayers > 5) {
         if (numMonsters === 1) mult = 0.5;
-        else if (numMonsters === 2) mult = 1.0;
+        else if (numMonsters === 2) fillVal = 1.0;
         else if (numMonsters >= 3 && numMonsters <= 6) mult = 1.5;
         else if (numMonsters >= 7 && numMonsters <= 10) mult = 2.0;
         else if (numMonsters >= 11 && numMonsters <= 14) mult = 2.5;
@@ -73288,6 +73593,855 @@ function esploraStanzaProcedurale() {
     card.style.display = 'block';
 }
 
+// ================= World & Narrative Logic =================
+
+// 1. NPC & Tavern Generator
+const npcNames = ["Alaric", "Borna", "Caelen", "Dorn", "Elara", "Fael", "Gareth", "Halia", "Ilyana", "Jorun", "Kael", "Lyra", "Merek", "Nia", "Orin", "Paelias", "Quinn", "Rowan", "Sylas", "Tari", "Ulfgar", "Vael", "Wrenn", "Xylar", "Ynis", "Zane"];
+const npcRaces = ["Umano", "Elfo", "Nano", "Halfling", "Mezzorco", "Tiefling", "Gnomo", "Dragonide", "Mezzelfo"];
+const npcTraits = ["Voce profonda e graffiante", "Tic nervoso all'occhio sinistro", "Manca un dito della mano", "Ride sempre fuori luogo", "Sussurra costantemente", "Profuma di lillà e uvaspina", "Suda copiosamente", "Fissa intensamente gli interlocutori", "Zoppica vistosamente", "Parla con un forte accento straniero"];
+const npcRumors = [
+    "Ha visto luci strane provenire dalle rovine a nord.",
+    "Sostiene che il sindaco sia stato sostituito da un mutaforma.",
+    "Sa di un passaggio segreto sotto la vecchia taverna.",
+    "Ha trovato una strana moneta d'oro con un teschio inciso.",
+    "Sussurra che i lupi ultimamente siano guidati da qualcosa di innaturale.",
+    "Paga per ritrovare un caro cimelio rubato da dei goblin.",
+    "Racconta di un drago addormentato in un picco vicino, che sta per svegliarsi.",
+    "Crede che l'acqua del pozzo sia avvelenata dalla strega della palude."
+];
+
+const tavernAdjectives = ["Il Cinghiale", "Il Corvo", "La Sirena", "Il Boccale", "La Spada", "Il Drago", "Il Leone", "La Lanterna", "L'Orso", "Il Viandante"];
+const tavernNouns = ["Zoppo", "Nero", "Ubriaco", "D'Argento", "Spezzata", "Rosso", "Dormiente", "Magica", "Ghiacciato", "Stanco"];
+const tavernDrinks = ["Birra Nanica Scatenata", "Idromele Elfico della Luna", "Sidro di Mele del Borgo", "Acquavite Speziata del Drago", "Vino Rosso Invecchiato", "Grog del Marinaio"];
+const tavernEvents = [
+    "Una rissa sta per scoppiare tra due nani.",
+    "Un bardo sta cantando una ballata su un antico eroe, attirando l'attenzione di tutti.",
+    "Un tizio incappucciato nell'angolo buio fissa il party.",
+    "L'oste sta disperatamente cercando qualcuno per svuotare la cantina dai topi giganti.",
+    "Una partita a dadi clandestina sta rubando un mucchio d'oro ai mercanti locali."
+];
+
+function generaPNG() {
+    const nome = npcNames[Math.floor(Math.random() * npcNames.length)];
+    const razza = npcRaces[Math.floor(Math.random() * npcRaces.length)];
+    const tratto = npcTraits[Math.floor(Math.random() * npcTraits.length)];
+    const diceria = npcRumors[Math.floor(Math.random() * npcRumors.length)];
+    
+    const card = document.getElementById('improvOutputCard');
+    card.style.display = 'block';
+    card.innerHTML = `
+        <div style="font-family:'Outfit'; font-weight:900; color:#9b59b6; font-size:1.2em; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:5px; margin-bottom:10px;">
+            👤 PNG: ${nome} (${razza})
+        </div>
+        <p style="margin:5px 0;"><strong>Tratto Distintivo:</strong> <em>${tratto}</em></p>
+        <div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:5px; border-left:3px solid #9b59b6; margin-top:10px; font-style:italic;">
+            <strong>Diceria / Segreto:</strong> "${diceria}"
+        </div>
+    `;
+}
+
+function generaTaverna() {
+    const adj = tavernAdjectives[Math.floor(Math.random() * tavernAdjectives.length)];
+    const noun = tavernNouns[Math.floor(Math.random() * tavernNouns.length)];
+    const drink = tavernDrinks[Math.floor(Math.random() * tavernDrinks.length)];
+    const event = tavernEvents[Math.floor(Math.random() * tavernEvents.length)];
+    
+    const card = document.getElementById('improvOutputCard');
+    card.style.display = 'block';
+    card.innerHTML = `
+        <div style="font-family:'Outfit'; font-weight:900; color:#e67e22; font-size:1.2em; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:5px; margin-bottom:10px;">
+            🍺 Taverna: "${adj} ${noun}"
+        </div>
+        <p style="margin:5px 0;"><strong>Specialità della casa:</strong> <em>${drink}</em></p>
+        <div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:5px; border-left:3px solid #e67e22; margin-top:10px; font-style:italic;">
+            <strong>Evento in corso:</strong> "${event}"
+        </div>
+    `;
+}
+
+// 2. Weather & Environment Logic
+let currentBiome = "pianura";
+let currentWeatherEffect = null; 
+
+const weatherDatabase = {
+    'pianura': [
+        { nome: "Sereno", desc: "Clima mite e piacevole. Nessun effetto.", mod: null, audio: "https://actions.google.com/sounds/v1/water/rain_on_roof.ogg", trackName: "Vento Leggero" },
+        { nome: "Pioggia Battente", desc: "La visibilità è ridotta. -2 alle prove di Percezione (Saggezza). Terreno scivoloso.", mod: "-2 Percezione", audio: "https://actions.google.com/sounds/v1/weather/rain_heavy_loud.ogg", trackName: "Temporale" },
+        { nome: "Nebbia Fitta", desc: "Visibilità pesantemente oscurata. Vantaggio alle prove di Furtività, creature oltre 3m hanno Occultamento Totale.", mod: "Occultamento", audio: "https://actions.google.com/sounds/v1/weather/wind_blowing_howling.ogg", trackName: "Vento Misterioso" }
+    ],
+    'montagna': [
+        { nome: "Sereno", desc: "Aria pungente ma limpida.", mod: null, audio: "https://actions.google.com/sounds/v1/weather/wind_blowing_howling.ogg", trackName: "Vento Montano" },
+        { nome: "Tormenta di Neve", desc: "Freddo estremo e neve. Visibilità nulla. Terreno Difficile. TS Costituzione ogni ora per evitare Livelli di Indebolimento.", mod: "TS Freddo / Terreno Difficile", audio: "https://actions.google.com/sounds/v1/weather/blizzard.ogg", trackName: "Tormenta" },
+        { nome: "Vento Tempestoso", desc: "Raffiche fortissime. Svantaggio agli attacchi a distanza con armi.", mod: "Svantaggio Attacchi a Distanza", audio: "https://actions.google.com/sounds/v1/weather/wind_storm.ogg", trackName: "Vento Fortissimo" }
+    ],
+    'palude': [
+        { nome: "Caldo Asfissiante", desc: "Umidità insopportabile. Svantaggio ai TS per evitare Fatica.", mod: "Svantaggio Fatica", audio: "https://actions.google.com/sounds/v1/water/rain_heavy_loud.ogg", trackName: "Rane e Insetti" },
+        { nome: "Nebbia Tossica", desc: "Gas velenoso a livello del suolo. 1d4 danni da veleno per chi finisce prono.", mod: "Gas Velenoso", audio: "https://actions.google.com/sounds/v1/weather/wind_blowing_howling.ogg", trackName: "Palude Oscura" }
+    ],
+    'deserto': [
+        { nome: "Sole Cocente", desc: "Calore letale. È necessaria acqua doppia. Svantaggio a TS Costituzione.", mod: "Svantaggio Costituzione", audio: "https://actions.google.com/sounds/v1/weather/wind_storm.ogg", trackName: "Vento Secco" },
+        { nome: "Tempesta di Sabbia", desc: "Visibilità nulla. 1d4 danni contundenti per round. Vantaggio a Nascondersi.", mod: "Danni Sabbia / Occultamento", audio: "https://actions.google.com/sounds/v1/weather/blizzard.ogg", trackName: "Tempesta di Sabbia" }
+    ],
+    'sottosuolo': [
+        { nome: "Oscurità Magica", desc: "Anche la scurovisione è ostacolata. Le fiamme non magiche si spengono.", mod: "Oscurità Totale", audio: "https://actions.google.com/sounds/v1/weather/wind_blowing_howling.ogg", trackName: "Echi Cavernosi" },
+        { nome: "Tremori Tellurici", desc: "Possibili crolli dal soffitto. Svantaggio ad Acrobazia e TS Destrezza.", mod: "Svantaggio Destrezza", audio: "https://actions.google.com/sounds/v1/water/rain_on_roof.ogg", trackName: "Soffitto Gocciolante" }
+    ],
+    'marittimo': [
+        { nome: "Mareggiata", desc: "Onde enormi e vento. Terreno difficile sul ponte, tiri per colpire a distanza con svantaggio.", mod: "Svantaggio Tiro", audio: "https://actions.google.com/sounds/v1/weather/rain_heavy_loud.ogg", trackName: "Oceano in Tempesta" },
+        { nome: "Canto di Sirena", desc: "Echi incantatori nell'aria. TS Saggezza o svantaggio a prove mentali.", mod: "TS Saggezza", audio: "https://actions.google.com/sounds/v1/weather/wind_blowing_howling.ogg", trackName: "Brezza Marina e Voci" }
+    ]
+};
+
+function cambiaBioma() {
+    currentBiome = document.getElementById('biomeSelector').value;
+    document.getElementById('weatherEffectDesc').innerHTML = `<em>Bioma cambiato. Genera un evento atmosferico.</em>`;
+    document.getElementById('activeWeatherBadge').innerText = "Sconosciuto";
+    document.getElementById('activeWeatherBadge').style.background = "#555";
+}
+
+function generaMeteoCasuale() {
+    let biomeEvents = weatherDatabase[currentBiome];
+    if (!biomeEvents) {
+        biomeEvents = weatherDatabase['pianura']; // Fallback
+    }
+    
+    const event = biomeEvents[Math.floor(Math.random() * biomeEvents.length)];
+    currentWeatherEffect = event;
+    
+    document.getElementById('activeWeatherBadge').innerText = event.nome;
+    
+    let color = "#555";
+    if (event.mod) color = "#c0392b"; // Bad weather
+    else color = "#27ae60"; // Good weather
+    
+    document.getElementById('activeWeatherBadge').style.background = color;
+    
+    document.getElementById('weatherEffectDesc').innerHTML = `
+        <strong>Effetto:</strong> ${event.desc}
+    `;
+    
+    document.getElementById('recommendedTrackName').innerText = event.trackName;
+    const player = document.getElementById('ambientAudioPlayer');
+    player.src = event.audio;
+    
+    aggiornaUICombattimentoMeteo();
+}
+
+function playRecommendedAudio() {
+    const player = document.getElementById('ambientAudioPlayer');
+    if(player.src) {
+        player.play().catch(e => {
+            console.warn("Autoplay audio blocked by browser. User needs to interact.", e);
+            alert("Il browser ha bloccato l'audio. Interagisci di nuovo o controlla i permessi.");
+        });
+    } else {
+        alert("Genera prima un evento atmosferico!");
+    }
+}
+
+function stopAudio() {
+    const player = document.getElementById('ambientAudioPlayer');
+    player.pause();
+    player.currentTime = 0;
+}
+
+function aggiornaUICombattimentoMeteo() {
+    let banner = document.getElementById('weatherWarningBanner');
+    if (!banner) {
+        const gridContainer = document.getElementById('combatGridContainer').parentElement;
+        banner = document.createElement('div');
+        banner.id = 'weatherWarningBanner';
+        gridContainer.parentNode.insertBefore(banner, gridContainer);
+    }
+    
+    if (currentWeatherEffect && currentWeatherEffect.mod) {
+        banner.innerHTML = `
+            <div style="background:rgba(192, 57, 43, 0.2); border:1px solid #c0392b; border-radius:8px; padding:10px; margin-bottom:15px; display:flex; align-items:center; gap:10px;">
+                <span style="font-size:1.5em;">⚠️</span>
+                <div>
+                    <div style="font-family:'Outfit'; font-weight:900; color:#ff3333;">Clima Avverso in Corso: ${currentWeatherEffect.nome}</div>
+                    <div style="font-size:0.85em; color:#ddd;">Modificatori Attivi in Combattimento: <strong>${currentWeatherEffect.mod}</strong>. (${currentWeatherEffect.desc})</div>
+                </div>
+            </div>
+        `;
+        banner.style.display = "block";
+    } else {
+        banner.style.display = "none";
+    }
+}
+
+
+// 3. Calendar & Time Tracker
+let currentDay = 1;
+let currentMonth = 1;
+let currentYear = 1000;
+
+function avanzaTempo(giorni) {
+    currentDay += giorni;
+    
+    let mesiAvanzati = 0;
+    while(currentDay > 30) {
+        currentDay -= 30;
+        currentMonth += 1;
+        mesiAvanzati++;
+    }
+    
+    while(currentMonth > 12) {
+        currentMonth -= 12;
+        currentYear += 1;
+    }
+    
+    aggiornaCalendario();
+    processaAutomazioniTempo(giorni, mesiAvanzati);
+}
+
+function aggiornaCalendario() {
+    document.getElementById('calendarDateDisplay').innerText = `Giorno ${currentDay} - Mese ${currentMonth} - Anno ${currentYear}`;
+}
+
+function processaAutomazioniTempo(giorniAvanzati, mesiAvanzati) {
+    let alerts = [];
+    
+    alerts.push(`Sono passati ${giorniAvanzati} giorni.`);
+    alerts.push(`🍽️ Controlla se i personaggi hanno scalato le razioni necessarie (1 al giorno).`);
+    
+    if (giorniAvanzati >= 7 || currentDay % 7 === 0 || currentDay === 1) {
+        alerts.push(`🏪 Le scorte dei mercanti e dei negozi cittadini sono state ripristinate.`);
+        document.getElementById('shopInventoryGrid').innerHTML = "";
+        document.getElementById('shopInfoText').style.display = "none";
+    }
+    
+    const alertsDiv = document.getElementById('calendarAlerts');
+    alertsDiv.innerHTML = alerts.map(a => `<div style="margin-bottom:5px;">- ${a}</div>`).join('');
+    alertsDiv.style.borderLeft = "3px solid #2ecc71";
+    alertsDiv.style.background = "rgba(46, 204, 113, 0.1)";
+}
+
+// 4. Downtime Activity Manager
+function eseguiDowntime() {
+    const activity = document.getElementById('downtimeActivity').value;
+    const days = parseInt(document.getElementById('downtimeDays').value) || 1;
+    const resDiv = document.getElementById('downtimeResult');
+    
+    let profit = 0;
+    let narrative = "";
+    let color = "#f1c40f";
+    
+    const roll = Math.floor(Math.random() * 20) + 1; 
+    
+    if (activity === 'lavoro') {
+        profit = days * 2; 
+        narrative = `Hai lavorato onestamente in città per ${days} giorni. Ti sei guadagnato da vivere senza troppi rischi.`;
+    } else if (activity === 'forgia') {
+        if (roll >= 15) {
+            profit = days * 5;
+            narrative = `Lavoro eccellente alla forgia! I tuoi manufatti sono andati a ruba. (Tiro: ${roll})`;
+        } else {
+            profit = days * 1;
+            narrative = `Lavoro mediocre, hai coperto a malapena le spese dei materiali. (Tiro: ${roll})`;
+        }
+    } else if (activity === 'studio') {
+        profit = 0;
+        narrative = `Hai studiato per ${days} giorni in biblioteca. Guadagni Vantaggio alla prossima prova di Intelligenza (Arcano/Storia). (Tiro: ${roll})`;
+        color = "#3498db";
+    } else if (activity === 'erbe') {
+        if (roll >= 10) {
+            profit = days * 3;
+            narrative = `Hai trovato radici ed erbe rare nei boschi, rivendendole a buon prezzo. (Tiro: ${roll})`;
+            color = "#2ecc71";
+        } else {
+            profit = 0;
+            narrative = `Giornate infruttuose. Non hai trovato nulla di utile. (Tiro: ${roll})`;
+            color = "#7f8c8d";
+        }
+    } else if (activity === 'scommesse') {
+        const gambleRoll = Math.floor(Math.random() * 100) + 1;
+        if (gambleRoll > 80) {
+            profit = days * 20;
+            narrative = `Sbancato! Hai vinto una grossa somma ai dadi clandestini. (Tiro d100: ${gambleRoll})`;
+            color = "#27ae60";
+        } else if (gambleRoll < 30) {
+            profit = -(days * 10);
+            narrative = `Sfortuna nera. Hai perso parecchio oro e forse hai fatto arrabbiare le persone sbagliate. (Tiro d100: ${gambleRoll})`;
+            color = "#c0392b";
+        } else {
+            profit = 0;
+            narrative = `Sei andato in pari. Né vinte, né perse. (Tiro d100: ${gambleRoll})`;
+        }
+    } else if (activity === 'carousing') {
+        profit = -(days * 5);
+        narrative = `Hai fatto bagordi per ${days} giorni! Hai speso soldi, ma hai fatto nuove amicizie. Guadagni 1 nuova Diceria nel Diario.`;
+        color = "#9b59b6";
+    }
+    
+    avanzaTempo(days);
+    
+    resDiv.style.display = "block";
+    resDiv.style.borderLeftColor = color;
+    
+    let oroStr = profit > 0 ? `<strong style="color:var(--gold);">+${profit} MO</strong>` : (profit < 0 ? `<strong style="color:#e74c3c;">${profit} MO</strong>` : `<strong>0 MO</strong>`);
+    
+    resDiv.innerHTML = `
+        <div style="font-weight:bold; margin-bottom:5px; color:${color};">Risultato Downtime:</div>
+        <div style="margin-bottom:8px;">${narrative}</div>
+        <div style="font-size:1.1em;">Bilancio Netto: ${oroStr}</div>
+    `;
+    
+    if (activity === 'carousing') {
+        const randomRumor = npcRumors[Math.floor(Math.random() * npcRumors.length)];
+        aggiungiQuestAllLista(randomRumor, 'diceria');
+    }
+}
+
+// 5. Quest Log & Rumors
+let questList = [];
+let questCounter = 0;
+
+function aggiungiQuestManuale() {
+    const text = prompt("Inserisci il testo della Diceria o Missione Secondaria:");
+    if (text && text.trim() !== "") {
+        aggiungiQuestAllLista(text, 'quest');
+    }
+}
+
+function aggiungiQuestAllLista(testo, tipo) {
+    questCounter++;
+    questList.push({ id: questCounter, testo: testo, tipo: tipo, completata: false });
+    renderQuestLog();
+}
+
+function completaQuest(id) {
+    const q = questList.find(x => x.id === id);
+    if (q) {
+        q.completata = !q.completata;
+        renderQuestLog();
+    }
+}
+
+function eliminaQuest(id) {
+    questList = questList.filter(x => x.id !== id);
+    renderQuestLog();
+}
+
+function renderQuestLog() {
+    const container = document.getElementById('questLogContainer');
+    container.innerHTML = "";
+    
+    if (questList.length === 0) {
+        container.innerHTML = `<div style="color:#888; font-style:italic; font-size:0.9em; text-align:center;">Il diario è vuoto. Segna qui dicerie o quest in sospeso.</div>`;
+        return;
+    }
+    
+    questList.forEach(q => {
+        const item = document.createElement('div');
+        item.style = `background:rgba(0,0,0,0.3); border:1px solid ${q.completata ? '#27ae60' : 'rgba(255,255,255,0.1)'}; border-radius:6px; padding:10px; display:flex; justify-content:space-between; align-items:center; transition:all 0.2s; opacity:${q.completata ? '0.5' : '1'};`;
+        
+        let icon = q.tipo === 'diceria' ? '🗣️' : '📜';
+        if (q.completata) icon = '✅';
+        
+        item.innerHTML = `
+            <div style="flex:1; padding-right:10px; font-size:0.9em; color:${q.completata ? '#888' : '#ddd'}; text-decoration:${q.completata ? 'line-through' : 'none'};">
+                <span style="margin-right:8px;">${icon}</span> ${q.testo}
+            </div>
+            <div style="display:flex; gap:5px;">
+                <button onclick="completaQuest(${q.id})" style="background:transparent; border:none; cursor:pointer; font-size:1.1em;" title="Segna Completata">✔️</button>
+                <button onclick="eliminaQuest(${q.id})" style="background:transparent; border:none; cursor:pointer; font-size:1.1em;" title="Elimina">🗑️</button>
+            </div>
+        `;
+        container.appendChild(item);
+    });
+}
+
+// ================= Master Tools & Expansion =================
+
+// Fullscreen
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+            console.log(`Error attempting to enable fullscreen: ${err.message}`);
+        });
+    } else {
+        document.exitFullscreen();
+    }
+}
+
+// Session Timer
+let sessionTimerInterval;
+let sessionSeconds = 0;
+let isTimerRunning = false;
+
+function updateSessionTimerDisplay() {
+    const h = Math.floor(sessionSeconds / 3600).toString().padStart(2, '0');
+    const m = Math.floor((sessionSeconds % 3600) / 60).toString().padStart(2, '0');
+    const s = (sessionSeconds % 60).toString().padStart(2, '0');
+    document.getElementById('sessionTimerDisplay').innerText = `${h}:${m}:${s}`;
+}
+
+function toggleSessionTimer() {
+    const btn = document.getElementById('timerToggleBtn');
+    if (isTimerRunning) {
+        clearInterval(sessionTimerInterval);
+        isTimerRunning = false;
+        btn.innerText = "▶️";
+    } else {
+        sessionTimerInterval = setInterval(() => {
+            sessionSeconds++;
+            updateSessionTimerDisplay();
+        }, 1000);
+        isTimerRunning = true;
+        btn.innerText = "⏸️";
+    }
+}
+
+function resetSessionTimer() {
+    clearInterval(sessionTimerInterval);
+    sessionSeconds = 0;
+    isTimerRunning = false;
+    document.getElementById('timerToggleBtn').innerText = "▶️";
+    updateSessionTimerDisplay();
+}
+
+// Event Log
+let eventLog = [];
+
+function toggleEventLog() {
+    const modal = document.getElementById('eventLogModal');
+    modal.style.display = modal.style.display === 'none' ? 'block' : 'none';
+    renderEventLog();
+}
+
+function logEvent(msg) {
+    const time = new Date().toLocaleTimeString();
+    eventLog.unshift(`[${time}] ${msg}`);
+    if (eventLog.length > 100) eventLog.pop(); // keep last 100
+    renderEventLog();
+}
+
+function renderEventLog() {
+    const list = document.getElementById('eventLogList');
+    if (eventLog.length === 0) {
+        list.innerHTML = `<em style="color: #666;">Nessun evento registrato.</em>`;
+        return;
+    }
+    list.innerHTML = eventLog.map(e => `<div style="border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:4px;">${e}</div>`).join('');
+}
+
+// Intercept existing functions to log events
+const originalGeneraLoot = generaLoot;
+generaLoot = function() {
+    originalGeneraLoot();
+    logEvent("Il Master ha aperto un Forziere.");
+};
+
+// Travel Calculator
+function calcolaViaggio() {
+    const dist = parseFloat(document.getElementById('travelDist').value) || 0;
+    const speed = parseFloat(document.getElementById('travelSpeed').value) || 1;
+    const resDiv = document.getElementById('travelResult');
+    
+    if(dist <= 0 || speed <= 0) {
+        resDiv.innerHTML = "Valori non validi.";
+        return;
+    }
+    
+    const days = dist / speed;
+    const exactDays = Math.floor(days);
+    const hours = Math.round((days - exactDays) * 24);
+    
+    resDiv.innerHTML = `<strong style="color:var(--gold);">Tempo stimato:</strong> ${exactDays} Giorni e ${hours} Ore. <br>
+    <button onclick="avanzaTempo(${exactDays}); logEvent('Il gruppo ha viaggiato per ${exactDays} giorni.');" style="margin-top:10px; padding:5px; background:#27ae60; color:white; border:none; border-radius:4px; cursor:pointer;">Applica Avanzamento Calendario (${exactDays}g)</button>`;
+}
+
+// Custom Monster Creator
+function creaMostroPersonalizzato() {
+    const nome = document.getElementById('customMonsterName').value.trim();
+    const tipo = document.getElementById('customMonsterType').value.trim() || "Sconosciuto";
+    const cr = document.getElementById('customMonsterCR').value.trim() || "0";
+    const hp = document.getElementById('customMonsterHP').value || "10";
+    const ac = document.getElementById('customMonsterAC').value || "10";
+    const attacchi = document.getElementById('customMonsterAttacks').value.trim();
+    
+    if (!nome) { alert("Inserisci almeno il nome del mostro!"); return; }
+    
+    // Costruisci l'oggetto mostro
+    const m = {
+        name: nome,
+        meta: `Taglia Media ${tipo}, Non Allineato`,
+        ArmorClass: `${ac} (naturale)`,
+        HitPoints: `${hp}`,
+        Speed: "9 m",
+        STR: "10 (+0)", DEX: "10 (+0)", CON: "10 (+0)", INT: "10 (+0)", WIS: "10 (+0)", CHA: "10 (+0)",
+        Challenge: cr,
+        Traits: "Creatura Personalizzata",
+        Actions: attacchi || "Attacco Base: +2 a colpire, 1d4 danni."
+    };
+    
+    // Aggiungi al database in cima (unshift in modo da vederlo)
+    databaseMostri.unshift(m);
+    
+    logEvent(`Creato nuovo mostro: ${nome} (CR ${cr})`);
+    alert(`Mostro ${nome} aggiunto al Bestiario!`);
+    
+    // Svuota form
+    document.getElementById('customMonsterName').value = "";
+    document.getElementById('customMonsterAttacks').value = "";
+    
+    // Rendi i mostri filtrabili
+    filtraMostriBacheca();
+}
+
+// Save & Load Campaign
+function salvaCampagna() {
+    const state = {
+        tokens: window.state.tokens,
+        gridState: window.gridState,
+        gridRows: document.getElementById('gridRows').value,
+        gridCols: document.getElementById('gridCols').value,
+        combatActive: isCombatActive,
+        incontro: incontroCorrente,
+        iniziativa: listaIniziativa,
+        eventLog: eventLog,
+        time: { day: currentDay, month: currentMonth, year: currentYear },
+        quests: questList,
+        dmNotes: document.getElementById('dmNotesArea').value,
+        sessionTimer: sessionSeconds
+    };
+    
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state));
+    const dlAnchorElem = document.createElement('a');
+    dlAnchorElem.setAttribute("href", dataStr);
+    dlAnchorElem.setAttribute("download", `campagna_save_${new Date().toISOString().slice(0,10)}.json`);
+    dlAnchorElem.click();
+    
+    logEvent("Campagna salvata su disco.");
+}
+
+function caricaCampagna(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const state = JSON.parse(e.target.result);
+            
+            // Restore Grid
+            document.getElementById('gridRows').value = state.gridRows || 12;
+            document.getElementById('gridCols').value = state.gridCols || 12;
+            rigeneraGrigliaVuota(); // Rigenera le dimensioni base
+            
+            window.gridState = state.gridState || {};
+            window.state.tokens = state.tokens || [];
+            renderMappa();
+            
+            // Restore Combat
+            incontroCorrente = state.incontro || [];
+            listaIniziativa = state.iniziativa || [];
+            isCombatActive = state.combatActive || false;
+            
+            if (isCombatActive) {
+                document.getElementById('combatTrackerPanel').style.display = 'block';
+                document.getElementById('endCombatBtn').style.display = 'block';
+                aggiornaTrackerIniziativaUI();
+            }
+            renderIncontro();
+            
+            // Restore Time
+            if (state.time) {
+                currentDay = state.time.day || 1;
+                currentMonth = state.time.month || 1;
+                currentYear = state.time.year || 1000;
+                aggiornaCalendario();
+            }
+            
+            // Restore Quests
+            questList = state.quests || [];
+            renderQuestLog();
+            
+            // Restore Notes
+            document.getElementById('dmNotesArea').value = state.dmNotes || "";
+            
+            // Restore Log & Timer
+            eventLog = state.eventLog || [];
+            sessionSeconds = state.sessionTimer || 0;
+            updateSessionTimerDisplay();
+            renderEventLog();
+            
+            logEvent("Campagna caricata con successo.");
+            alert("Salvataggio caricato correttamente!");
+            
+        } catch(err) {
+            alert("Errore durante il caricamento del file di salvataggio.");
+            console.error(err);
+        }
+    };
+    reader.readAsText(file);
+}
+
+// Player View Toggle
+let isPlayerView = false;
+function togglePlayerView() {
+    isPlayerView = document.getElementById('playerViewToggle').checked;
+    
+    const dmElements = document.querySelectorAll('.dm-only-element');
+    dmElements.forEach(el => {
+        el.style.display = isPlayerView ? 'none' : '';
+    });
+    
+    logEvent(isPlayerView ? "Attivata Modalità Giocatore (Fog of War)." : "Disattivata Modalità Giocatore. (Vista Master)");
+    renderMappa();
+    renderIncontro(); // Aggiorna anche il tracker incontro per oscurare i dati mostro
+}
+
+// Modify Grid Rendering to hide secrets in Player View
+const originalRenderMappa = renderMappa;
+renderMappa = function() {
+    originalRenderMappa(); // Renderizza normalmente
+    
+    if (isPlayerView) {
+        // Nascondi elementi segreti dalla griglia
+        const grid = document.getElementById('mappaGrid');
+        
+        // 1. Nascondi mostri con visibilità falsa (se implementata nel token)
+        // Oppure potremmo semplicemente nascondere il container laterale. 
+        // 2. Se una cella ha 'Oggetto: Trappola' nascosta, oscuriamo l'icona
+        for (let key in window.gridState) {
+            const cellState = window.gridState[key];
+            if (cellState.oggetto && cellState.oggetto.nome === 'Trappola') {
+                const parts = key.split('-');
+                const r = parts[0], c = parts[1];
+                const index = parseInt(r) * parseInt(document.getElementById('gridCols').value) + parseInt(c);
+                const cellDiv = grid.children[index];
+                if(cellDiv) {
+                    // Nascondi l'icona trappola
+                    cellDiv.innerHTML = "";
+                    if(cellState.altezza) cellDiv.innerHTML += `<div style="font-size:0.65em; position:absolute; bottom:2px; right:2px;">^${cellState.altezza}</div>`;
+                }
+            }
+        }
+    }
+};
+
+// Generatori Aggiuntivi (Trappole, Indovinelli, Città)
+function generaTrappola() {
+    const t = MASTER_DATA_PACK.trapsDB[Math.floor(Math.random() * MASTER_DATA_PACK.trapsDB.length)];
+    const card = document.getElementById('improvOutputCard');
+    card.style.display = 'block';
+    card.innerHTML = `
+        <div style="font-family:'Outfit'; font-weight:900; color:#e74c3c; font-size:1.2em; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:5px; margin-bottom:10px;">
+            ☠️ ${t.nome}
+        </div>
+        <p style="margin:5px 0;"><strong>Innesco:</strong> <em>${t.innesco}</em></p>
+        <p style="margin:5px 0;"><strong>Salvezza:</strong> <em>${t.ts}</em></p>
+        <p style="margin:5px 0; color:#e74c3c;"><strong>Danno:</strong> <em>${t.danno}</em></p>
+        <div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:5px; border-left:3px solid #e74c3c; margin-top:10px; font-style:italic;">
+            <strong>Disinnesco:</strong> "${t.disinnesco}"
+        </div>
+    `;
+    logEvent("Generata una Trappola casuale.");
+}
+
+function generaIndovinello() {
+    const r = MASTER_DATA_PACK.riddlesDB[Math.floor(Math.random() * MASTER_DATA_PACK.riddlesDB.length)];
+    const card = document.getElementById('improvOutputCard');
+    card.style.display = 'block';
+    card.innerHTML = `
+        <div style="font-family:'Outfit'; font-weight:900; color:#1abc9c; font-size:1.2em; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:5px; margin-bottom:10px;">
+            ❓ Indovinello Antico
+        </div>
+        <p style="margin:10px 0; font-size:1.1em; font-style:italic; line-height:1.4;">"${r.indovinello}"</p>
+        <div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:5px; border-left:3px solid #1abc9c; margin-top:15px; font-weight:bold; color:var(--gold);">
+            Soluzione: ${r.soluzione}
+        </div>
+    `;
+    logEvent("Generato un Indovinello casuale.");
+}
+
+function generaCitta() {
+    const c = MASTER_DATA_PACK.citiesDB[Math.floor(Math.random() * MASTER_DATA_PACK.citiesDB.length)];
+    const card = document.getElementById('improvOutputCard');
+    card.style.display = 'block';
+    card.innerHTML = `
+        <div style="font-family:'Outfit'; font-weight:900; color:#3498db; font-size:1.2em; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:5px; margin-bottom:10px;">
+            🏰 Città Scoperta: ${c}
+        </div>
+        <p style="margin:5px 0;">Modifica questo testo per aggiungere dettagli sulla città, governanti, esportazioni e pericoli locali.</p>
+    `;
+    logEvent(`Generata città: ${c}`);
+}
+
+// Inject DataPack Items into Loot/Shop
+// We will push spells and shields into the databaseOggetti once it's populated.
+window.addEventListener('load', () => {
+    // Wait slightly to ensure CSV items are parsed (if they were hardcoded), 
+    // but since they are loaded dynamically, we will just push them to databaseOggetti
+    if (typeof MASTER_DATA_PACK !== 'undefined') {
+        if(MASTER_DATA_PACK.spellsDB) {
+            MASTER_DATA_PACK.spellsDB.forEach(sp => {
+                databaseOggetti.push({
+                    Nome: sp.nome,
+                    Dado: sp.danno,
+                    TipoDanno: sp.tipo,
+                    Requisito: sp.livello,
+                    Proprieta: "Magia",
+                    Effetto: sp.desc,
+                    Rarita: sp.rarita
+                });
+            });
+        }
+        if(MASTER_DATA_PACK.shieldsDB) {
+            MASTER_DATA_PACK.shieldsDB.forEach(sh => {
+                databaseOggetti.push({
+                    Nome: sh.nome,
+                    Dado: sh.dado,
+                    TipoDanno: sh.tipoDanno,
+                    Requisito: sh.requisito,
+                    Proprieta: sh.proprieta,
+                    Effetto: sh.effetto,
+                    Rarita: sh.rarita
+                });
+            });
+        }
+        console.log("Data Pack injected into loot tables!");
+    }
+});
+
+// Soundboard Logic
+function popolaListaSuoni() {
+    if (typeof MASTER_DATA_PACK === 'undefined' || !MASTER_DATA_PACK.soundsDB) return;
+    
+    const cat = document.getElementById('soundCategory').value;
+    const select = document.getElementById('soundTrackSelect');
+    select.innerHTML = "";
+    
+    const tracce = MASTER_DATA_PACK.soundsDB.filter(s => s.cat === cat);
+    if (tracce.length === 0) {
+        select.innerHTML = "<option>Nessuna traccia disponibile</option>";
+        return;
+    }
+    
+    tracce.forEach((t, i) => {
+        const opt = document.createElement('option');
+        opt.value = t.url;
+        opt.innerText = t.nome;
+        select.appendChild(opt);
+    });
+}
+
+function playCustomAudio() {
+    const select = document.getElementById('soundTrackSelect');
+    const url = select.value;
+    const audio = document.getElementById('ambientAudioPlayer');
+    
+    if (url && url !== "Nessuna traccia disponibile" && url !== "Caricamento...") {
+        audio.src = url;
+        audio.play().catch(e => console.log("Autoplay bloccato dal browser."));
+        logEvent(`Iniziata riproduzione audio: ${select.options[select.selectedIndex].text}`);
+    }
+}
+
+function stopAudio() {
+    const audio = document.getElementById('ambientAudioPlayer');
+    audio.pause();
+    audio.currentTime = 0;
+    logEvent("Audio fermato.");
+}
+
+// Mod Manager Logic
+function toggleModManager() {
+    const modal = document.getElementById('modManagerModal');
+    modal.style.display = modal.style.display === 'none' ? 'block' : 'none';
+}
+
+function importaDatiGlobali() {
+    const fileInput = document.getElementById('modFileInput');
+    const category = document.getElementById('modCategorySelector').value;
+    const statusText = document.getElementById('modStatusText');
+    
+    if (!fileInput.files || fileInput.files.length === 0) {
+        statusText.innerText = "❌ Seleziona un file prima di importare.";
+        statusText.style.color = "#e74c3c";
+        return;
+    }
+    
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+        try {
+            const content = e.target.result;
+            if (file.name.endsWith('.csv')) {
+                // Handle basic CSV import for items
+                if (category === 'items') {
+                    processaCSV(content);
+                    statusText.innerText = "✅ CSV Oggetti caricato con successo!";
+                    statusText.style.color = "#2ecc71";
+                    logEvent("L'arsenale base è stato aggiornato via CSV.");
+                } else {
+                    statusText.innerText = "❌ CSV supportato solo per la categoria Oggetti. Usa JSON per il resto.";
+                    statusText.style.color = "#e74c3c";
+                }
+            } else if (file.name.endsWith('.json')) {
+                // Parse JSON
+                const data = JSON.parse(content);
+                
+                if (category === 'items') {
+                    if (Array.isArray(data)) {
+                        databaseOggetti.armi = databaseOggetti.armi.concat(data);
+                        statusText.innerText = `✅ Importati ${data.length} nuovi oggetti (JSON).`;
+                        logEvent(`Importati ${data.length} nuovi oggetti JSON.`);
+                    }
+                } else if (category === 'monsters') {
+                    if (Array.isArray(data)) {
+                        // Inseriamo in coda (concat non funziona su const se riassegnato, usiamo push)
+                        data.forEach(m => databaseMostri.push(m));
+                        statusText.innerText = `✅ Importati ${data.length} nuovi mostri nel bestiario!`;
+                        logEvent(`Importato un DataPack con ${data.length} mostri.`);
+                        popolaSelettoreMostri();
+                    }
+                } else if (category === 'sounds') {
+                    if (Array.isArray(data)) {
+                        if (!MASTER_DATA_PACK.soundsDB) MASTER_DATA_PACK.soundsDB = [];
+                        data.forEach(s => MASTER_DATA_PACK.soundsDB.push(s));
+                        statusText.innerText = `✅ Importati ${data.length} nuovi effetti sonori!`;
+                        logEvent(`Importata una Soundboard Mod (${data.length} tracce).`);
+                    }
+                } else if (category === 'narrative') {
+                    // Expects an object matching MASTER_DATA_PACK structure
+                    if (typeof data === 'object') {
+                        Object.keys(data).forEach(key => {
+                            if (!MASTER_DATA_PACK[key]) MASTER_DATA_PACK[key] = [];
+                            if (Array.isArray(data[key])) {
+                                data[key].forEach(item => MASTER_DATA_PACK[key].push(item));
+                            }
+                        });
+                        statusText.innerText = `✅ Database narrativo aggiornato! (Spells, Traps, etc.)`;
+                        logEvent(`Il Master ha fuso un Data Pack Narrativo Mod.`);
+                    }
+                }
+                statusText.style.color = "#2ecc71";
+            }
+        } catch(err) {
+            statusText.innerText = "❌ Errore critico nel parsing del file. Il formato è corretto?";
+            statusText.style.color = "#e74c3c";
+            console.error(err);
+        }
+    };
+    
+    if (file.name.endsWith('.json')) {
+        reader.readAsText(file);
+    } else if (file.name.endsWith('.csv')) {
+        reader.readAsText(file);
+    } else {
+        statusText.innerText = "❌ Formato file non supportato (.json, .csv).";
+        statusText.style.color = "#e74c3c";
+    }
+}
+
+// Inizializza soundboard al caricamento
+window.addEventListener('load', () => {
+    setTimeout(popolaListaSuoni, 500); // Wait for DataPack to load
+});
 </script>
 </body>
 </html>
