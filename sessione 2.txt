@@ -1,0 +1,23 @@
+Obiettivo Principale
+Sconfiggere il Mind Flayer spettrale nella Cripta di Shura, liberare gli elfi di Foglia Nera dall'illusione e ricongiungersi con Conad per pianificare l'assalto alle Miniere Gravitazionali.
+
+
+prima di uscire dal dungeon il personaggio di luigi viene bloccato brevemente dentro il dungeon dove trova il fantasma di karius che dona ad egli I Parapugni di Karius (danno un vantaggio contro le aberrazioni/mostri psichici e permettono di attaccare i mostri eterei)
+l Diario di Karius (Lettura per i giocatori)
+"Giorno 42 sull'Isola. Le mie indagini sulla Lidlich mi hanno condotto qui. Non è un semplice monopolio commerciale: stanno usando una tossina estratta dagli Uomini-Fungo, distillata tramite macchinari orcheschi, per piegare la mente delle persone. A Foglia Nera, hanno introdotto una creatura aberrante che si spaccia per la divinità 'Shura'. La creatura proietta un'illusione per usare gli elfi come cavie per i test della tossina. Chiunque comincia a riprendere coscienza o a resistere all'illusione viene barbaramente giustiziato, e Shura spaccia queste morti come 'sacrifici religiosi'. Ho provato ad affrontarla ma... mi hanno catturato. Mi stanno iniettando la tossina. Sento il mio corpo cambiare, la mia carne mutare in legno e cuoio. Se qualcuno legge questo diario... non fidatevi della Lidlich. Distruggete Shura." 
+
+⚔️ Scena 2: Lo Scontro nella Cripta di Shura
+Il Dungeon: Il party entra nella cripta. L'aria è fredda e risuona con un debole "Suono" psichico.
+Il Boss: Il Mind Flayer Spettrale (Shura):
+La creatura non è completamente fisica (resistenza ai danni non magici, a meno che non si usino i parapugni di Karius o incantesimi).
+Usa attacchi psichici e cerca di riattivare l'illusione per confondere i PG, mostrando loro i propri traumi passati (il villaggio distrutto di Zane, l'esplosione del laboratorio di Corinne, la cattura del villaggio di Bubo).
+La Risoluzione: Sconfiggendo il mostro, questo si dissolve in una pioggia di sfere di energia vitale che fluttuano verso il centro dell'isola.
+
+🍃 Scena 3: La Liberazione degli Elfi
+Morte dello Spettro: Quando Shura viene sconfitto, si dissolve in una pioggia di piccole sfere di energia vitale che sfrecciano via verso il centro dell'isola (il Libro le sta attirando).
+La Terribile Scoperta: Gli elfi cacciatori si risvegliano dal controllo mentale. Vedono il villaggio per quello che è veramente: una landa desolata e spettrale. Realizzano con orrore che Shura non era una divinità protettrice, ma un boia che testava la tossina su di loro e giustiziava i loro cari non appena mostravano segni di coscienza.
+Dialogo con Elric: Elric ringrazia piangendo il party per aver interrotto questo massacro silenzioso. Riconosce il valore di Bubo e gli consegna il Frammento di Giada Antica (un catalizzatore magico che brilla di luce verde, utile per la sua futura cura).
+
+🛒 Scena 4: il Prossimo Passo
+Il Rapporto di Conad: Mentre difendeva il villaggio dei funghi, Conad ha intercettato e distrutto una carovana di rifornimento della Lidlich. Ha trovato una mappa dettagliata che indica il percorso per le Miniere Gravitazionali di Bovinia.
+La Scelta: Il gruppo decide di dirigersi verso le miniere per liberare i prigionieri, trovare il cristallo gravitazionale per Bubo e fermare l'estrazione di minerale della Lidlich.
