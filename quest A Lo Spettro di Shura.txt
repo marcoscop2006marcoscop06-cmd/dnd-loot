@@ -1,0 +1,33 @@
+🛡️ Quest A: Lo Spettro di Shura (Cimitero Elfico)
+Questo documento contiene i dettagli di preparazione per il Dungeon Master per gestire la Quest A (Sandbox dell'Atto 1).
+
+🗺️ Scena 1: Il Bottino del Cavaliere Karius
+Il party si trova ancora nel dungeon di Karius dopo aver sconfitto il Mimic.
+
+Il Diario di Karius (Lettura per i giocatori)
+"Giorno 42 sull'Isola. Le mie indagini sulla Lidlich mi hanno condotto qui. Non è un semplice monopolio commerciale: stanno usando una tossina estratta dagli Uomini-Fungo, distillata tramite macchinari orcheschi, per piegare la mente delle persone. A Foglia Nera, hanno introdotto una creatura aberrante che si spaccia per la divinità 'Shura'. La creatura proietta un'illusione per usare gli elfi come cavie per i test della tossina. Chiunque comincia a riprendere coscienza o a resistere all'illusione viene barbaramente giustiziato, e Shura spaccia queste morti come 'sacrifici religiosi'. Ho provato ad affrontarla ma... mi hanno catturato. Mi stanno iniettando la tossina. Sento il mio corpo cambiare, la mia carne mutare in legno e cuoio. Se qualcuno legge questo diario... non fidatevi della Lidlich. Distruggete Shura."
+
+Oggetti Magici Trovati:
+I Parapugni di Karius (Per Luigi): Guanti borchiati in acciaio e cuoio.
+Proprietà: I colpi senz'armi infliggono +1d4 danni da forza aggiuntivi. Una volta per riposo breve, quando Luigi colpisce una creatura di tipo Aberrazione, può costringerla a superare un Tiro Salvezza su Costituzione (CD 13) o essere Stordita fino alla fine del suo turno successivo.
+L'Amuleto di Karius (Per il Party): Un medaglione d'argento raffigurante lo stemma di Porto Rissoso.
+Proprietà: Chi lo indossa ha Vantaggio nei Tiri Salvezza contro gli effetti di Charme, Spavento e danni psichici.
+⚔️ Scena 2: Lo Scontro con il Mind Flayer Spettrale (Shura)
+Il party torna a Foglia Nera ed entra nella Cripta di Shura al cimitero.
+
+Atmosfera e Incontro
+La cripta è buia, ricoperta di rampicanti neri e marci. Al centro fluttua una figura semitrasparente con tentacoli sul volto, avvolta da una inconfondibile veste cerimoniale blu (simbolo degli accoliti di Belzebù): Shura, il Mind Flayer Spettrale.
+Caratteristiche del Mostro (Spettro Aberrante):
+Resistenza: Danni contundenti, perforanti e taglienti da attacchi non magici. (I pugni di Luigi con i Parapugni infliggono invece danno pieno perché sono magici/forza!).
+Attacco Psichico (Frusta Mentale): Raggio d'azione 9m, infligge 2d6 danni psichici e richiede un Tiro Salvezza su Intelligenza (CD 12) per non essere frastornati (non si possono usare reazioni).
+Sussurri dell'Illusione: Shura cerca di proiettare i traumi dei PG (es. mostre/mosche per Zane, l'esplosione per Corinne).
+🍃 Scena 3: La Liberazione degli Elfi
+Morte dello Spettro: Quando Shura viene sconfitto, si dissolve in una pioggia di piccole sfere di energia vitale che sfrecciano via verso il centro dell'isola (il Libro le sta attirando).
+La Terribile Scoperta: Gli elfi cacciatori si risvegliano dal controllo mentale. Vedono il villaggio per quello che è veramente: una landa desolata e spettrale. Realizzano con orrore che Shura non era una divinità protettrice, ma un boia che testava la tossina su di loro e giustiziava i loro cari non appena mostravano segni di coscienza.
+La Rivelazione di Elric: Elric ringrazia piangendo il party per aver interrotto questo massacro silenzioso. Utilizza le sue conoscenze elfiche antiche per decifrare la pergamena di Bubo, rivelandogli che per curarsi ha bisogno di altri due elementi: il Cristallo di Gravità (nelle Miniere, Quest B) e il Nettare di Fiamma Fatua (un ingrediente che si troverà oltre la barriera, nella Palude delle Mosche, all'inizio dell'Atto 2).
+🪓 Scena 4: La Carovana della Lidlich e le Miniere
+La Mappa: Conad (che è sempre stato con il gruppo ed ha partecipato attivamente allo scontro) mostra al gruppo la mappa dettagliata sottratta dal carro di rifornimenti che aveva intercettato precedentemente durante il tragitto.
+I Dettagli:
+La mappa indica il percorso esatto per le Miniere Gravitazionali di Bovinia.
+Un foglio contabile allegato, firmato da un "Manager Regionale degli Scavi" della Lidlich, si lamenta del rallentamento della produzione a Bovinia dovuto a "instabilità gravitazionali causate dalla presenza del Libro".
+Il gruppo pianifica il prossimo passo: dirigersi alle miniere per disattivare la trivella principale e sottrarre il Cristallo di Gravità.
